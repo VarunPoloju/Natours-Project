@@ -1,7 +1,10 @@
 const fs = require("fs");
 const exp = require("express");
 const morgan = require("morgan");
+const dotenv = require("dotenv");
 
+// console.log(process.env);
+dotenv.config({ path: "/config.env" });
 // importing routes
 const tourRouter = require("./Routes/tourRoutes");
 const userRouter = require("./Routes/userRoutes");
@@ -9,9 +12,11 @@ const userRouter = require("./Routes/userRoutes");
 // creating express object
 const app = exp();
 
-app.use(morgan("dev"));
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 app.use(exp.json());
-app.use(exp.static(`${__dirname}/public`))
+app.use(exp.static(`${__dirname}/public`));
 // middleware --applies for every single request
 app.use((req, res, next) => {
   console.log("hello from middleware 👋");
@@ -26,7 +31,6 @@ app.use((req, res, next) => {
 // mounting routes
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
-
 
 const port = 3000;
 app.listen(port, () => {
