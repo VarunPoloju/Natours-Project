@@ -6,6 +6,18 @@ const app = exp();
 // middleware -- > is a function used to modify incoming request data
 app.use(exp.json());
 
+
+// middleware --applies fro every single request
+app.use((req, res, next) => {
+    console.log('hello from middleware 👋');
+    next();
+})
+
+app.use((req, res, next) => {
+    req.requestTime = new Date().toISOString();
+    next();
+})
+
 // app.get('/', (req, res) => {
 // .json -->automatically set content-type to application/json
 //     res.status(200).json({ message: 'Hello from the server side!', app: 'Natours' });
@@ -22,6 +34,7 @@ const x = JSON.parse(fs.readFileSync("./dev-data/data/tours-simple.json"));
 // ==========================GET ALL TOURS REQUEST======================================================
 
 const getAllTours = (req, res) => {
+    console.log(req.requestTime);
     res.status(200).json({
         status: "success",
         results: x.length,
