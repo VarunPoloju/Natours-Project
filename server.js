@@ -33,8 +33,8 @@ app.use((req, res, next) => {
 // const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`))
 // or
 const x = JSON.parse(fs.readFileSync("./dev-data/data/tours-simple.json"));
-// ===========================Route Handlers and routes==============================
-// ==========================GET ALL TOURS REQUEST======================================================
+// ===========================Route Handlers==============================
+// ==========================GET ALL TOURS & Users REQUEST======================================================
 
 const getAllTours = (req, res) => {
   console.log(req.requestTime);
@@ -48,7 +48,12 @@ const getAllTours = (req, res) => {
   });
 };
 
-app.get("/api/v1/tours", getAllTours);
+const getAllUsers = (req, res) => {
+  res.status(500).send({
+    status: "error",
+    message: "This route is not yet defined",
+  });
+};
 
 // ==========================GET TOUR by using id===============================================
 const getTour = (req, res) => {
@@ -69,8 +74,13 @@ const getTour = (req, res) => {
     tour,
   });
 };
-app.get("/api/v1/tours/:id", getTour);
 
+const getUser = (req, res) => {
+  res.status(500).send({
+    status: "error",
+    message: "This route is not yet defined",
+  });
+};
 // ===========================POST REQUEST=================================================
 
 const createTour = (req, res) => {
@@ -97,7 +107,13 @@ const createTour = (req, res) => {
     }
   );
 };
-app.post("/api/v1/tours", createTour);
+
+const createUser = (req, res) => {
+  res.status(500).send({
+    status: "error",
+    message: "This route is not yet defined",
+  });
+};
 
 // =========================PATCH===========================================================
 
@@ -116,7 +132,12 @@ const updateTour = (req, res) => {
   });
 };
 
-app.patch("/api/v1/tours/:id", updateTour);
+const updateUser = (req, res) => {
+  res.status(500).send({
+    status: "error",
+    message: "This route is not yet defined",
+  });
+};
 
 // =========================DELETE ===========================================================
 
@@ -132,8 +153,38 @@ const deleteTour = (req, res) => {
     data: null,
   });
 };
-app.delete("/api/v1/tours/:id", deleteTour);
 
+const deleteUser = (req, res) => {
+  res.status(500).send({
+    status: "error",
+    message: "This route is not yet defined",
+  });
+};
+
+// ==============================ROUTES========================
+// app.get("/api/v1/tours", getAllTours);
+// app.get("/api/v1/tours/:id", getTour);
+// app.post("/api/v1/tours", createTour);
+// app.patch("/api/v1/tours/:id", updateTour);
+// app.delete("/api/v1/tours/:id", deleteTour);
+
+//              u can use any of the above format
+// ========================tours==============================
+app.route("/api/v1/tours").get(getAllTours).post(createTour);
+
+app
+  .route("/api/v1/tours/:id")
+  .get(getTour)
+  .patch(updateTour)
+  .delete(deleteTour);
+
+//   =================USERS====================
+app.route("/api/v1/users").get(getAllUsers).post(createUser);
+app
+  .route("/api/v1/users/:id")
+  .get(getUser)
+  .patch(updateUser)
+  .delete(deleteUser);
 // =======================================START SERVER===============================================
 
 const port = 3000;
