@@ -11,7 +11,7 @@ const app = exp();
 
 app.use(morgan("dev"));
 app.use(exp.json());
-
+app.use(exp.static(`${__dirname}/public`))
 // middleware --applies for every single request
 app.use((req, res, next) => {
   console.log("hello from middleware 👋");
