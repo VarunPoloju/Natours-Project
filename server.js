@@ -1,4 +1,3 @@
-const fs = require('fs');
 const exp = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
