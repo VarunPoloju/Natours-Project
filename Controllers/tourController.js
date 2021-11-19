@@ -61,7 +61,7 @@ exports.createTour = async (req, res) => {
   } catch (err) {
     res.status(404).json({
       status: 'failed',
-      message: 'Invaid data sent',
+      message: err
     });
   }
 };
