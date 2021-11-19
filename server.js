@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 
 const dbrul =
-  'mongodb+srv://<username>:<password>@cluster0.wr0ge.mongodb.net/<databasename>?retryWrites=true&w=majority';
+  'mongodb+srv://cdbsample:cdbsample@cluster0.wr0ge.mongodb.net/natours?retryWrites=true&w=majority';
 // mongoose package
 const mongoose = require('mongoose');
 
@@ -27,6 +27,7 @@ mongoose.connect(
 
 // console.log(process.env);
 dotenv.config({ path: '/config.env' });
+
 // importing routes
 const tourRouter = require('./Routes/tourRoutes');
 const userRouter = require('./Routes/userRoutes');
@@ -37,9 +38,10 @@ const app = exp();
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// middleware --applies for every single request
 app.use(exp.json());
 app.use(exp.static(`${__dirname}/public`));
-// middleware --applies for every single request
 app.use((req, res, next) => {
   console.log('hello from middleware 👋');
   next();
