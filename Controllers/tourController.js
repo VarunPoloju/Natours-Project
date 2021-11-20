@@ -7,18 +7,35 @@ exports.getAllTours = async (req, res) => {
   try {
     // BUILD QUERY
     // ... --->destructuring
-    // 1)FILTERING
+    // 1A)FILTERING
     // console.log(req.query);
     const queryObj = { ...req.query };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach((el) => delete queryObj[el]);
 
-    // 2)ADVANCED FILTERING
+    // 1B)ADVANCED FILTERING
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-    console.log(JSON.parse(queryStr));
+    // console.log(JSON.parse(queryStr));
 
-    const query = Tour.find(JSON.parse(queryStr));
+    let query = Tour.find(JSON.parse(queryStr));
+
+    // 2)SORTING
+    // if there is a sort in query of the url then this will execute
+    // like if in url localhost:3000/api/v1/tours?sort=-price if u see like this it will sort price in
+    // descending ordr , remoe minus it will be ascending order
+    if (req.query.sort) {
+      // if the price is same while sorting then u need to go for other criteria like ratingsAverage or whatever
+      // localhost:3000/api/v1/tours?sort=-price,-ratingsAverage like this
+      const sortBy = req.query.sort.split(',').join(' ');
+      // console.log(sortBy);
+      query = query.sort(sortBy);
+    }
+    // if user don't specify any kind of sort then this will execute
+    else {
+      query = query.sort('-CreatedAt');
+    }
+
     // EXECUTE QUERY
     const getAllTours = await query;
 
