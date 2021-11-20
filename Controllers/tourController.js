@@ -21,6 +21,7 @@ exports.getAllTours = async (req, res) => {
     let query = Tour.find(JSON.parse(queryStr));
 
     // 2)SORTING
+
     // if there is a sort in query of the url then this will execute
     // like if in url localhost:3000/api/v1/tours?sort=-price if u see like this it will sort price in
     // descending ordr , remoe minus it will be ascending order
@@ -34,6 +35,16 @@ exports.getAllTours = async (req, res) => {
     // if user don't specify any kind of sort then this will execute
     else {
       query = query.sort('-CreatedAt');
+    }
+
+    // 3)FIELD LIMITING
+    if (req.query.fields) {
+      const fields = req.query.fields.split(',').join(' ');
+      // it is selecting only particular fields like name,price etc --> it's called as projecting
+      // ex:localhost:3000/api/v1/tours?fields=name,duration,price,difficulty
+      query = query.select('name duration price difficulty');
+    }else{
+      query = query.select('-__v')
     }
 
     // EXECUTE QUERY
