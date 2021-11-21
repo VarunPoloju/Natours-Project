@@ -123,6 +123,7 @@ exports.deleteTour = async (req, res) => {
   }
 };
 
+// =======================================AGGREGATION PIPLINE=====================
 exports.getTourStats = async (req, res) => {
   try {
     const stats = await Tour.aggregate([
@@ -155,6 +156,62 @@ exports.getTourStats = async (req, res) => {
       status: 'success',
       data: {
         stats,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'failed',
+      message: err.message,
+    });
+  }
+};
+
+// ==================================================================================
+
+exports.getMonthlyPlan = async (req, res) => {
+  try {
+    const year = req.params.year * 1; //2021
+    const plan = await Tour.aggregate([
+      {
+        // unwind -> it will deconstruct an array field from input documents and then output one document for each ele of array
+        $unwind: '$startDates',
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: '$startDates' },
+          numberOfTours: { $sum: 1 },
+          tours: { $push: '$name' },
+        },
+      },
+      {
+        $addFields: { month: '$_id' },
+      },
+      {
+        $project: {
+          _id: 0,
+        },
+      },
+      {
+        //  -1 ->> for showing in descending order
+        $sort: { numberOfTours: -1 },
+      },
+      {
+        $limit : 12
+      }
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        plan,
       },
     });
   } catch (err) {
