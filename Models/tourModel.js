@@ -8,6 +8,9 @@ const toursSchema = new mongoose.Schema(
       type: String,
       required: [true, 'A tour must have a name'],
       trim: true,
+      maxlength: [40, 'A tour name must have less or equal to 40 characters'],
+      minlength: [10, 'A  tour name must have more or equal to 40 characters'],
+      unique: true, //unique -> not a validator
     },
     slugify: String,
     duration: {
@@ -21,10 +24,16 @@ const toursSchema = new mongoose.Schema(
     difficulty: {
       type: String,
       required: [true, 'A tour must have difficulty'],
+      enum: {
+        values: ['easy', 'medium', 'difficult'],
+        message: 'Difficulty should be either easy,medium,difficulty',
+      },
     },
     ratingsAverage: {
       type: Number,
       default: 4.5,
+      min: [1, 'Rating must be above 1.0'],
+      max: ['5', 'Rating should be max of 5.0'],
     },
     ratingsQuantity: {
       type: Number,
@@ -94,7 +103,6 @@ toursSchema.pre('save', function (next) {
 //   console.log(doc);
 //   next();
 // });
-
 
 const Tour = mongoose.model('Tour', toursSchema);
 
