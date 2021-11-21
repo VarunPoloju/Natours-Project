@@ -1,6 +1,6 @@
 // mongoose package
 const mongoose = require('mongoose');
-
+const slugify = require('slugify');
 const toursSchema = new mongoose.Schema(
   // schema definition
   {
@@ -9,6 +9,7 @@ const toursSchema = new mongoose.Schema(
       required: [true, 'A tour must have a name'],
       trim: true,
     },
+    slugify: String,
     duration: {
       type: Number,
       required: [true, 'A tour must have duration'],
@@ -71,6 +72,30 @@ const toursSchema = new mongoose.Schema(
 toursSchema.virtual('durationInWeeks').get(function () {
   return this.duration / 7;
 });
+
+//=========================== DOCUMENT MIDDLEWARE====================
+// it runs only before .save() and .create()
+// pre -middleware which is gonna run before an actual event
+// save --> it's an event
+// function() --> will be called before an actual document is saved to database
+toursSchema.pre('save', function (next) {
+  // console.log(this);
+  this.slugify = slugify(this.name, { lower: true });
+  next();
+});
+
+// toursSchema.pre('save', function (next) {
+//   console.log('Will save document');
+//   next();
+// });
+
+// POST MIDDLEWARE
+// toursSchema.post('save', function (doc, next) {
+//   console.log(doc);
+//   next();
+// });
+
+
 const Tour = mongoose.model('Tour', toursSchema);
 
 module.exports = Tour;
