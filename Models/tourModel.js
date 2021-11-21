@@ -1,6 +1,8 @@
 // mongoose package
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+let validator = require('validator');
+
 const toursSchema = new mongoose.Schema(
   // schema definition
   {
@@ -10,7 +12,8 @@ const toursSchema = new mongoose.Schema(
       trim: true,
       maxlength: [40, 'A tour name must have less or equal to 40 characters'],
       minlength: [10, 'A  tour name must have more or equal to 40 characters'],
-      unique: true, //unique -> not a validator
+      unique: true, //unique -> not a validator just to make sure only unique values
+      // validate: [validator.isAlpha,'Tour name must only contain characters']
     },
     slugify: String,
     duration: {
@@ -45,6 +48,15 @@ const toursSchema = new mongoose.Schema(
     },
     priceDiscount: {
       type: Number,
+      // checking whether the priceDiscount is less than the price itself
+      // we should show error when priceDiscount is greater than price or else
+      validate: {
+        validator: function (inputValue) {
+          // this only works for while creating new docs i.e points to current doc
+          return inputValue < this.price; // pricedisc(100) < realprice(200)  --> true
+        },
+        message: 'Discount price ({VALUE}) should be below the regular price',
+      },
     },
     summary: {
       type: String,
