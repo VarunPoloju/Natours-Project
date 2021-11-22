@@ -70,6 +70,16 @@ app.all('*', (req, res, next) => {
   });
 });
 
+// for error handler middleware
+app.use((err, req, res, next) => {
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || 'error';
+  res.status(err.statusCode).json({
+    status: err.status,
+    message: err.message,
+  });
+});
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`server started on port ${port} successfully!😁`);
