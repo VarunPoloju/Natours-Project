@@ -41,10 +41,11 @@ if (process.env.NODE_ENV === 'development') {
 // middleware --applies for every single request
 app.use(exp.json());
 app.use(exp.static(`${__dirname}/public`));
-app.use((req, res, next) => {
-  console.log('hello from middleware 👋');
-  next();
-});
+
+// app.use((req, res, next) => {
+//   console.log('hello from middleware 👋');
+//   next();
+// });
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
@@ -54,6 +55,20 @@ app.use((req, res, next) => {
 //infrom to express application -  mounting routes
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+
+// for invalid path  --> not much better
+// runs only for one particular url
+// app.use((req, res, next) => {
+//   res.send({ message: `${req.url} is not a valid path` });
+// });
+
+//For handling invalid paths --> much better
+app.all('*', (req, res, next) => {
+  res.status(404).json({
+    status: 'Failed',
+    message: `Can't find ${req.url} on this server!`,
+  });
+});
 
 const port = 3000;
 app.listen(port, () => {

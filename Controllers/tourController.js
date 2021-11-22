@@ -22,6 +22,7 @@ exports.getAllTours = async (req, res) => {
       .paginate();
     const getAllTours = await features.query;
 
+    // SEND RESPONSE
     res.status(200).json({
       status: 'success',
       requestedAt: req.requestTime,
