@@ -2,6 +2,12 @@ const exp = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 
+process.on('uncaughtException', err => {
+  console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+  console.log(err.name, err.message);
+  process.exit(1);
+});
+
 const dbrul =
   'mongodb+srv://cdbsample:cdbsample@cluster0.wr0ge.mongodb.net/natours?retryWrites=true&w=majority';
 // mongoose package
