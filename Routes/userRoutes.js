@@ -1,8 +1,14 @@
 const exp = require('express');
 const userController = require('../Controllers/userController');
+const authenticationController = require('../Controllers/authenticationController');
+
 const userRouter = exp.Router();
 
 //   =================USERS====================
+
+userRouter.post('/signup', authenticationController.signup);
+
+// REST ARCHITECTURE FORMAT
 userRouter
   .route('/')
   .get(userController.getAllUsers)
