@@ -2,7 +2,7 @@ const exp = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 
-process.on('uncaughtException', err => {
+process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
   console.log(err.name, err.message);
   process.exit(1);
@@ -31,7 +31,7 @@ mongoose.connect(
 );
 
 // console.log(process.env);
-dotenv.config({ path: '/config.env' });
+dotenv.config({ path: '/.env' });
 
 // importing
 const AppError = require('./Utils/appError');
@@ -86,9 +86,8 @@ const port = 3000;
 app.listen(port, () => {
   console.log(`server started on port ${port} successfully!😁`);
 });
- 
 
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err) => {
   console.log('UNHANDLED REJECTION! 💥 Shutting down...');
   console.log(err.name, err.message);
   server.close(() => {
