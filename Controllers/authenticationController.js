@@ -10,6 +10,8 @@ const signToken = (id) => {
   });
 };
 
+// ================================USER SIGNUP======================
+
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
@@ -29,6 +31,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 });
 
+// ===================================USER LOGIN================================
 exports.login = catchAsync(async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -55,4 +58,32 @@ exports.login = catchAsync(async (req, res, next) => {
     status: 'success',
     token: token,
   });
+});
+
+// ===================================PROTECT ROUTES=================
+exports.protect = catchAsync(async (req, res, next) => {
+  let token;
+  // 1)we need to get token and check if it exists
+  // These are the conditions in which we actuall want to save the token
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return next(
+      new AppError(
+        'You are not logged in! Please login to continue access',
+        401
+      )
+    );
+  }
+  // 2)Validate(Verification of) the token
+
+  // 3)Check if user still exists
+
+  // 4)Check if user changed password after token was issued
+  next();
 });
