@@ -7,6 +7,7 @@ const userRouter = exp.Router();
 //   =================USERS====================
 
 userRouter.post('/signup', authenticationController.signup);
+userRouter.post('/login', authenticationController.login);
 
 // REST ARCHITECTURE FORMAT
 userRouter
