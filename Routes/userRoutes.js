@@ -9,6 +9,9 @@ const userRouter = exp.Router();
 userRouter.post('/signup', authenticationController.signup);
 userRouter.post('/login', authenticationController.login);
 
+userRouter.post('/forgotPassword', authenticationController.forgotPassword);
+userRouter.post('/resetPassword', authenticationController.resetPassword);
+
 // REST ARCHITECTURE FORMAT
 userRouter
   .route('/')
