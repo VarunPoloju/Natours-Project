@@ -10,7 +10,10 @@ userRouter.post('/signup', authenticationController.signup);
 userRouter.post('/login', authenticationController.login);
 
 userRouter.post('/forgotPassword', authenticationController.forgotPassword);
-userRouter.post('/resetPassword', authenticationController.resetPassword);
+userRouter.patch(
+  '/resetPassword/:token',
+  authenticationController.resetPassword
+);
 
 // REST ARCHITECTURE FORMAT
 userRouter
