@@ -22,6 +22,11 @@ tourRouter
   .route('/:id')
   .get(tourController.getTour)
   .patch(tourController.updateTour)
-  .delete(tourController.deleteTour);
+  .delete(
+    authenticationController.protect,
+    // gives permission(exceptional) to these people
+    authenticationController.restrictTo('admin', 'lead-guide'),
+    tourController.deleteTour
+  );
 
 module.exports = tourRouter;

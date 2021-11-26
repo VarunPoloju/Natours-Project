@@ -21,6 +21,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    role: req.body.role,
   });
 
   // creation of token
@@ -114,3 +115,19 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = freshUser;
   next();
 });
+
+// ============================RESTRICT CERTAIN ROUTES EVEN IF USER lOGGED IN=====================
+
+// actually we need to pass two arguments that is admin and lead-guide so instead of that we
+// used ES6 spread operatior which takes any number of arguments
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    //roles ['admin','lead-guide']
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError('You do not have permission to perform this action', 403)
+      );
+    }
+    next();
+  };
+};
