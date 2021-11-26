@@ -2,6 +2,9 @@ const User = require('../Models/userModel');
 const catchAsync = require('../Utils/catchAsync');
 const jwt = require('jsonwebtoken');
 const AppError = require('../Utils/appError');
+// we only want promosify object from util so we have done destrucutring and taken promisify
+// ES6 destrucuturing
+const { promisify } = require('util');
 require('dotenv').config();
 
 const signToken = (id) => {
@@ -63,7 +66,7 @@ exports.login = catchAsync(async (req, res, next) => {
 // ===================================PROTECT ROUTES=================
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
-  // 1)we need to get token and check if it exists
+  // 1)Read the token from authorization hader
   // These are the conditions in which we actuall want to save the token
   if (
     req.headers.authorization &&
@@ -72,6 +75,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
   }
 
+  // Check if the token actually exists
   if (!token) {
     return next(
       new AppError(
@@ -81,9 +85,32 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
   // 2)Validate(Verification of) the token
+  // if someone manipulated the data or aslo if token has already expired
+
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  // console.log(decoded);
 
   // 3)Check if user still exists
+  // ex:what if user has changed his passwrd after the token has issued or if user doesn't exists
+
+  const freshUser = await User.findById(decoded.id);
+  if (!freshUser) {
+    return next(
+      new AppError('The User Belonging to token does not exists', 401)
+    );
+  }
 
   // 4)Check if user changed password after token was issued
+  // for this we'll create an instance method and that method is going to be available on all the documents or instancs
+  // of the model and we do that in User model
+  if (freshUser.changedPasswordAfter(decoded.iat)) {
+    return next(
+      new AppError('User recently changed the passowrd,Please login again', 401)
+    );
+  }
+
+  // GRANT ACCESS TO THE PROTECTED ROUTE
+  // lastly put entire user data on the request
+  req.user = freshUser;
   next();
 });
